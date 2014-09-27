@@ -15,15 +15,18 @@ makeTriangle = do
     makeObject
         [ (VertexShader, vertShaderPath)
         , (FragmentShader, fragShaderPath)
-        ] vertexPositions indices
-        [("position", VertexArrayDescriptor 4 Float 0 $ ptrOffset 0)]
+        ] vertexPositions
+        [("position", VertexArrayDescriptor 4 Float 0 $ ptrOffset 0)
+        ,("normal", VertexArrayDescriptor 4 Float 0 $ ptrOffset (12*4))
+        ]
         Triangles 3
     where
         vertexPositions = 
             [ -0.5, -0.5, 0.0, 1.0
             ,  0.0,  0.5, 0.0, 1.0
             ,  0.5, -0.5, 0.0, 1.0
-            ]
-        indices =
-            [ 0, 1, 2
+            -- Normals
+            ,  0.0,  0.0, 1.0, 1.0
+            ,  0.0,  0.0, 1.0, 1.0
+            ,  0.0,  0.0, 1.0, 1.0
             ]

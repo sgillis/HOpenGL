@@ -16,6 +16,7 @@ import Events
 import View
 import Window (withWindow)
 import Objects.Cube (makeCube)
+import Objects.Triangle (makeTriangle)
 
 -------------------------------------------------------------------------------
 
@@ -29,8 +30,8 @@ runApp env state = void $ runRST run env state
 
 main :: IO ()
 main = do
-    let width  = 640
-        height = 480
+    let width  = 1280
+        height = 720
 
     eventsChan <- newTQueueIO :: IO (TQueue Event)
 

@@ -10,8 +10,7 @@ import Graphics.Buffers (makeBufferWithData, ptrOffset)
 import Graphics.ArrayObjects (makeArrayObject)
 import Graphics.Renderable
 
-data Object = Object Program [BufferObject] NumArrayIndices
-              PrimitiveMode VertexArrayObject
+data Object = Object Program BufferObject NumArrayIndices PrimitiveMode VertexArrayObject
 
 enableVertexArray :: Program -> (String, VertexArrayDescriptor a) -> IO ()
 enableVertexArray program (name, descriptor) = do
@@ -19,24 +18,21 @@ enableVertexArray program (name, descriptor) = do
     vertexAttribArray location $= Enabled
     vertexAttribPointer location $= (ToFloat, descriptor)
 
-makeObject :: [(ShaderType, FilePath)] -> [Float] -> [Word16] ->
+makeObject :: [(ShaderType, FilePath)] -> [Float] ->
               [(String, VertexArrayDescriptor a)] -> PrimitiveMode ->
-              NumArrayIndices -> MaybeT IO Object
-makeObject programSpec vertices indices attribs mode num = do
+              NumArrayIndices ->MaybeT IO Object
+makeObject programSpec vertices attribs mode num = do
     program <- makeProgram programSpec
     vertexBuffer <- liftIO $ makeBufferWithData ArrayBuffer vertices StaticDraw
-    indexBuffer <- liftIO $ makeBufferWithData ElementArrayBuffer indices StaticDraw
     vao <- liftIO makeArrayObject
 
     liftIO $ do
         bindVertexArrayObject $= Just vao
         bindBuffer ArrayBuffer $= Just vertexBuffer
-        bindBuffer ElementArrayBuffer $= Just indexBuffer
         mapM_ (enableVertexArray program) attribs
         bindVertexArrayObject $= Nothing
         bindBuffer ArrayBuffer $= Nothing
-        bindBuffer ElementArrayBuffer $= Nothing
-    return $ Object program [vertexBuffer, indexBuffer] num mode vao
+    return $ Object program vertexBuffer num mode vao
 
 instance Renderable Object where
     render object = renderWith object (\_ -> return ())
@@ -45,6 +41,6 @@ instance Renderable Object where
         bindVertexArrayObject $= Just vao
         currentProgram $= Just program
         m program
-        drawElements mode size UnsignedShort (ptrOffset 0)
+        drawArrays mode 0 size
         bindVertexArrayObject $= Nothing
         currentProgram $= Nothing

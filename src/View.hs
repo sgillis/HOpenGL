@@ -14,7 +14,7 @@ import Graphics.Renderable
 transMatrix :: Double -> Double -> Double -> Double -> M44 GL.GLfloat
 transMatrix t tx ty tz =
     mkTransformation
-        (axisAngle (V3 1 1 1) (realToFrac t * 2))
+        (axisAngle (V3 1 1 1) (realToFrac t * 0))
         (V3 x y z)
     where x = realToFrac tx
           y = realToFrac ty
