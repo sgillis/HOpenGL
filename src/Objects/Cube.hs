@@ -8,8 +8,8 @@ import Paths_HOpenGL
 import Graphics.Object (makeObject, Object)
 import Graphics.Buffers (ptrOffset)
 
-makeTriangle :: MaybeT IO Object
-makeTriangle = do
+makeCube :: MaybeT IO Object
+makeCube = do
     vertShaderPath <- liftIO $ getDataFileName "vertex.shader"
     fragShaderPath <- liftIO $ getDataFileName "fragment.shader"
     makeObject
@@ -17,13 +17,29 @@ makeTriangle = do
         , (FragmentShader, fragShaderPath)
         ] vertexPositions indices
         [("position", VertexArrayDescriptor 4 Float 0 $ ptrOffset 0)]
-        Triangles 3
+        Triangles 36
     where
         vertexPositions = 
-            [ 0.5, 0.5, -0.5, 1.0
-            , 0.0, 0.5, 0.0, 1.0
-            , 0.5, -0.5, 0.0, 1.0
+            [  0.5,  0.5,  0.5, 1.0
+            ,  0.5, -0.5,  0.5, 1.0
+            , -0.5, -0.5,  0.5, 1.0
+            , -0.5,  0.5,  0.5, 1.0
+            ,  0.5,  0.5, -0.5, 1.0
+            ,  0.5, -0.5, -0.5, 1.0
+            , -0.5, -0.5, -0.5, 1.0
+            , -0.5,  0.5, -0.5, 1.0
             ]
         indices =
             [ 0, 1, 2
+            , 0, 2, 3
+            , 0, 4, 5
+            , 0, 5, 1
+            , 4, 7, 6
+            , 4, 6, 5
+            , 3, 2, 6
+            , 3, 6, 7
+            , 1, 5, 2
+            , 1, 6, 2
+            , 7, 4, 0
+            , 7, 0, 3
             ]

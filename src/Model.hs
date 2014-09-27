@@ -16,7 +16,10 @@ data Env = Env
 data State = State
     { stateWindowWidth  :: !Int
     , stateWindowHeight :: !Int
-    , triangle          :: Object
+    , cube              :: Object
+    , xpos              :: !Double
+    , ypos              :: !Double
+    , zpos              :: !Double
     }
 
 data Event =

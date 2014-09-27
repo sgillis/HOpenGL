@@ -13,12 +13,15 @@ data-files:          *.shader
 executable HOpenGL
   hs-source-dirs:      src
   main-is:             Main.hs
-  build-depends:       base         >=4.6 && <4.7,
-                       GLFW-b       == 1.4.6,
-                       stm          == 2.4.2,
-                       mtl          == 2.1.2, 
-                       transformers == 0.3.0.0,
-                       OpenGL       == 2.9.2.0,
-                       bytestring   == 0.10.0.2,
-                       array        == 0.4.0.1
+  build-depends:       base             >=4.6 && <4.7,
+                       GLFW-b           == 1.4.6,
+                       stm              == 2.4.2,
+                       mtl              == 2.1.2, 
+                       transformers     == 0.3.0.0,
+                       OpenGL           == 2.9.2.0,
+                       bytestring       == 0.10.0.2,
+                       array            == 0.4.0.1,
+                       linear           == 1.10.1.2,
+                       linear-opengl    == 0.2.0.1,
+                       GLUtil           == 0.8.2
   default-language:    Haskell2010
