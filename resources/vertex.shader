@@ -8,12 +8,12 @@ uniform mat4 camera;
 uniform mat4 projection;
 uniform mat4 model;
 
-out vec4 fnormal;
-out vec4 v;
+out vec4 fNormal;
+out vec4 fPosition;
 
 void main()
 {
-    v = model * position;
-    gl_Position = projection * camera * v;
-    fnormal = normal;
+    fPosition = model * position;
+    gl_Position = projection * camera * fPosition;
+    fNormal = normal;
 }
