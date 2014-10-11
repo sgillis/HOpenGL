@@ -36,7 +36,9 @@ draw mtime = do
     h <- gets stateWindowHeight
     liftIO $ do
         GL.clearColor GL.$= GL.Color4 0 0 0 1
-        GL.clear [GL.ColorBuffer]
+        GL.clear [GL.ColorBuffer, GL.DepthBuffer]
+        GL.depthFunc GL.$= Just GL.Less
+        GL.cullFace GL.$= Just GL.Front
 
         renderWith cube $ \program -> do
             cameraLoc <- GL.get $ GL.uniformLocation program "camera"
