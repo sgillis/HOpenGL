@@ -38,7 +38,6 @@ main = do
 
     withWindow width height "test" $ \win -> do
         setCallbacks eventsChan win
-        G.swapInterval 1
         G.setCursorInputMode win G.CursorInputMode'Disabled
         GL.depthFunc GL.$= Just GL.Less
         GL.cullFace GL.$= Just GL.Front
@@ -58,6 +57,7 @@ main = do
                         { stateWindowWidth  = fbWidth
                         , stateWindowHeight = fbHeight
                         , cube              = c
+                        , cubePositions     = initialCubes
                         , player            = initialPlayer
                         }
                 runApp env state

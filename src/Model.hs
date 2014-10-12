@@ -6,8 +6,10 @@ import Control.Monad.State.Strict (StateT)
 import Linear
 
 import qualified Graphics.UI.GLFW as G
+import qualified Graphics.Rendering.OpenGL as GL
 
 import Graphics.Object
+import Utils
 
 data Env = Env
     { envEventsChan     :: TQueue Event
@@ -18,6 +20,7 @@ data State = State
     { stateWindowWidth  :: !Int
     , stateWindowHeight :: !Int
     , cube              :: Object
+    , cubePositions     :: [M44 GL.GLfloat]
     , player            :: Player
     }
 
@@ -51,6 +54,12 @@ initialPlayer =
 
 direction :: Player -> V3 Double
 direction player = 
-    let h = horizontalAngle player
+    let h = horizontalAngle player + (-pi/2)
         v = verticalAngle player
-    in V3 (cos h) (sin v) (sin h)
+    in V3 (cos h) (sin v) (-sin h)
+
+initialCubes :: [M44 GL.GLfloat]
+initialCubes =
+    [ transMatrix (V3 0 0 0)
+    , transMatrix (V3 1 0 0)
+    ]
