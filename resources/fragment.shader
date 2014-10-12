@@ -7,7 +7,7 @@ out vec4 fColor;
 
 void main()
 {
-    vec3 s = vec3(5.0, 10.0, 10.0);
+    vec3 s = vec3(5.0, 20.0, 5.0);
     vec3 l = normalize(s - vec3(fPosition));
     vec3 n = normalize(vec3(fNormal));
     vec3 Idiff = vec3(1.0, 1.0, 1.0) * max(dot(n, l), 0.1);
