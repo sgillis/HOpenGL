@@ -2,21 +2,22 @@ module Main (main) where
 
 -------------------------------------------------------------------------------
 
-import Control.Concurrent.STM (TQueue, newTQueueIO, tryReadTQueue, atomically)
+import Control.Concurrent.STM (TQueue, newTQueueIO)
 import Control.Monad.Trans.Maybe (runMaybeT)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad (void, unless)
 import Control.Monad.Reader (runReaderT, asks)
-import Control.Monad.State.Strict (runStateT, modify)
+import Control.Monad.State.Strict (runStateT)
 
 import qualified Graphics.UI.GLFW as G
+import qualified Graphics.Rendering.OpenGL as GL
 
 import Model
 import Events
 import View
+import Update
 import Window (withWindow)
 import Objects.Cube (makeCube)
-import Objects.Triangle (makeTriangle)
 
 -------------------------------------------------------------------------------
 
@@ -38,6 +39,9 @@ main = do
     withWindow width height "test" $ \win -> do
         setCallbacks eventsChan win
         G.swapInterval 1
+        G.setCursorInputMode win G.CursorInputMode'Disabled
+        GL.depthFunc GL.$= Just GL.Less
+        GL.cullFace GL.$= Just GL.Front
 
         (fbWidth, fbHeight) <- G.getFramebufferSize win
         
@@ -54,9 +58,7 @@ main = do
                         { stateWindowWidth  = fbWidth
                         , stateWindowHeight = fbHeight
                         , cube              = c
-                        , xpos              = 0
-                        , ypos              = 0
-                        , zpos              = (-2)
+                        , player            = initialPlayer
                         }
                 runApp env state
                 
@@ -66,43 +68,12 @@ run :: App
 run = do
     win <- asks envWindow
 
-    time <- liftIO G.getTime
-    draw time
+    update
+    draw
+
     liftIO $ do
         G.swapBuffers win
         G.pollEvents
-    processEvents
 
     q <- liftIO $ G.windowShouldClose win
     unless q run
-
-processEvents :: App
-processEvents = do
-    tc <- asks envEventsChan
-    me <- liftIO $ atomically $ tryReadTQueue tc
-    case me of
-        Nothing -> return ()
-        Just e -> do
-            processEvent e
-            processEvents
-
-processEvent :: Event -> App
-processEvent e = do
-    win <- asks envWindow
-    case e of
-        (EventError _ _) -> liftIO $ G.setWindowShouldClose win True
-        (EventKey _ G.Key'Escape _ G.KeyState'Pressed _) ->
-            liftIO $ G.setWindowShouldClose win True
-        (EventKey _ G.Key'W _ _ _) ->
-            modify $ \s -> s { ypos = ypos s + 0.2 }
-        (EventKey _ G.Key'S _ _ _) ->
-            modify $ \s -> s { ypos = ypos s - 0.2 }
-        (EventKey _ G.Key'D _ _ _) ->
-            modify $ \s -> s { xpos = xpos s + 0.2 }
-        (EventKey _ G.Key'A _ _ _) ->
-            modify $ \s -> s { xpos = xpos s - 0.2 }
-        (EventKey _ G.Key'R _ _ _) ->
-            modify $ \s -> s { zpos = zpos s + 0.2 }
-        (EventKey _ G.Key'F _ _ _) ->
-            modify $ \s -> s { zpos = zpos s - 0.2 }
-        _ -> return ()
