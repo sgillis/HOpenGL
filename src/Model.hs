@@ -21,6 +21,7 @@ data State = State
     , stateWindowHeight :: !Int
     , cube              :: Object
     , cubePositions     :: [M44 GL.GLfloat]
+    , texture           :: GL.TextureObject
     , player            :: Player
     }
 

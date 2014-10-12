@@ -8,6 +8,7 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad (void, unless)
 import Control.Monad.Reader (runReaderT, asks)
 import Control.Monad.State.Strict (runStateT)
+import Graphics.GLUtil.JuicyTextures
 
 import qualified Graphics.UI.GLFW as G
 import qualified Graphics.Rendering.OpenGL as GL
@@ -18,6 +19,7 @@ import View
 import Update
 import Window (withWindow)
 import Objects.Cube (makeCube)
+import Paths_HOpenGL
 
 -------------------------------------------------------------------------------
 
@@ -45,22 +47,30 @@ main = do
         (fbWidth, fbHeight) <- G.getFramebufferSize win
         
         mcube <- runMaybeT makeCube
+        texturePath <- getDataFileName "texture.png"
+        eitherTexture <- readTexture texturePath
 
-        case mcube of
-            Nothing -> putStrLn "Failed to load objects"
-            Just c -> do
-                let env = Env
-                        { envEventsChan     = eventsChan
-                        , envWindow         = win
-                        }
-                    state = State
-                        { stateWindowWidth  = fbWidth
-                        , stateWindowHeight = fbHeight
-                        , cube              = c
-                        , cubePositions     = initialCubes
-                        , player            = initialPlayer
-                        }
-                runApp env state
+        maybe
+            (return ())
+            (\cube -> do
+                either
+                    (\_ -> putStrLn "Failed to load texture")
+                    (\tex -> do
+                        let env = Env
+                                { envEventsChan     = eventsChan
+                                , envWindow         = win
+                                }
+                            state = State
+                                { stateWindowWidth  = fbWidth
+                                , stateWindowHeight = fbHeight
+                                , cube              = cube
+                                , cubePositions     = initialCubes
+                                , texture           = tex
+                                , player            = initialPlayer
+                                }
+                        runApp env state)
+                    eitherTexture)
+            mcube
                 
 -------------------------------------------------------------------------------
 
